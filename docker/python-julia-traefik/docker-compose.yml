@@ -1,0 +1,44 @@
+version: '3'
+
+volumes:
+  jupyter:
+    driver: local
+
+networks:
+  traefik:
+    external: true
+
+services:
+  jupyter:
+    image: jupyter/datascience-notebook
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      # Get the data from port xxxx instead of port 80
+      - "traefik.http.services.jupyter.loadbalancer.server.port=9999"
+      #- "traefik.docker.network=proxy"
+      # Get the routes from http
+      - "traefik.http.routers.jupyter.rule=Host(`jupyter.mysite.com`)"
+      - "traefik.http.routers.jupyter.entrypoints=web"
+      # Redirect these routes to https
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.jupyter.middlewares=redirect-to-https@docker"
+      # Get the routes from https
+      - "traefik.http.routers.jupyter-secured.rule=Host(`jupyter.mysite.com`)"
+      - "traefik.http.routers.jupyter-secured.entrypoints=web-secure"
+      # Apply autentificiation with http challenge
+      - "traefik.http.routers.jupyter-secured.tls=true"
+      - "traefik.http.routers.jupyter-secured.tls.certresolver=myhttpchallenge"
+    user: root
+    working_dir: /home/username/work
+    volumes:
+      - ./work:/home/username/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - NB_USER=username
+      - NB_UID=1001
+      - NB_GID=1001
+      - CHOWN_HOME=yes
+    command: start-notebook.sh --NotebookApp.token='changethis' --no-browser --allow-root --notebook-dir=/home/username/work --port 9999
+    

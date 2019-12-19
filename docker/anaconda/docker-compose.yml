@@ -1,0 +1,12 @@
+version: '3'
+services:
+  anaconda:
+    build: . 
+    ports:
+     - "8888:8888"
+    volumes:
+     - /code/Anaconda:/opt/notebooks
+    environment:
+     - JUPYTER_ENABLE_LAB=yes
+    command: /opt/conda/bin/jupyter notebook --NotebookApp.token='changethis' --notebook-dir=/opt/notebooks --ip='0.0.0.0' --port=8888 --no-browser --allow-root
+    

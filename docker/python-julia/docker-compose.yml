@@ -1,0 +1,16 @@
+version: '3'
+
+volumes:
+  jupyter:
+    driver: local
+
+services:
+  jupyter:
+    image: jupyter/datascience-notebook
+    ports:
+      - 8888:8888
+    volumes:
+     - jupyter:/home/jovyan/work
+    environment:
+     - JUPYTER_ENABLE_LAB=yes
+    command: start-notebook.sh --NotebookApp.token='change_me' --no-browser --allow-root --notebook-dir=/home/jovyan/work
