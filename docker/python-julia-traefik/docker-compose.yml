@@ -17,7 +17,7 @@ services:
       - "traefik.enable=true"
       # Get the data from port xxxx instead of port 80
       - "traefik.http.services.jupyter.loadbalancer.server.port=9999"
-      - "traefik.docker.network=proxy"
+      - "traefik.docker.network=traefik"
       # Get the routes from http
       - "traefik.http.routers.jupyter.rule=Host(`jupyter.mysite.com`)"
       - "traefik.http.routers.jupyter.entrypoints=web"
